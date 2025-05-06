@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tienda Online</title>
+</head>
+<body>
+    <p>
+        Nombre administrador: {{ nombre_admin }} <br>
+        Tienda: {{ tienda }}<br>
+        Fecha: {{ fecha }}<br>
+    </p>
+    <table border="1">
+            <tr>
+                <th>Nombre</th>
+                <th>Precio (€)</th>
+                <th>Categoria</th>
+                <th>Stock</th>
+            </tr>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto['nombre'] }}</td>
+                <td>{{ producto['precio'] }}</td>
+                <td>{{ producto['categoria'] }}</td>
+                <td>
+                    {% if producto.stock == 0 %}
+                        <strong style="color:red;">Agotado</strong>
+                    {% else %}
+                        {{ producto.stock }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+    </table>
+
+    <br>
+
+    <table border="1">
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Actividad</th>
+                <th>Pedidos</th>
+            </tr>
+            {% for usuarios in usuarios %}
+            <tr>
+                <td>{{ usuarios['nombre'] }}</td>
+                <td>{{ usuarios['email'] }}</td>
+                <td>
+                    {% if usuarios['activo'] == True %}
+                        <strong style="color:green;">Activo</strong>
+                    {% else %}
+                        <strong style="color:red;">Inactivo</strong>
+                    {% endif %}
+                </td>
+                <td>{{ usuarios['pedidos'] }}</td>
+            </tr>
+            {% endfor %}
+    </table>
+</body>
+</html>
