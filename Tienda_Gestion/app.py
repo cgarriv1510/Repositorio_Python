@@ -24,21 +24,24 @@ def registro():
     ]
 
     pedidos_recientes = [
-        {"cliente": "Ana", "total":3, "fecha":"2025-05-14"},
-        {"cliente": "Ana", "total": 15, "fecha": "2025-05-24"},
-        {"cliente": "Ana", "total": 8, "fecha": "2025-04-13"},
+        {"cliente": "Ana", "total":3.00, "fecha":"2025-05-14"},
+        {"cliente": "Ana", "total": 15.00, "fecha": "2025-05-24"},
+        {"cliente": "Ana", "total": 8.00, "fecha": "2025-04-13"},
 
 
-        {"cliente": "Luis", "total":1, "fecha":"2025-04-13"},
-        {"cliente": "Luis", "total": 5, "fecha": "2025-04-14"},
-        {"cliente": "Luis", "total": 13, "fecha": "2025-05-24"},
+        {"cliente": "Luis", "total":1.00, "fecha":"2025-04-13"},
+        {"cliente": "Luis", "total": 5.00, "fecha": "2025-04-14"},
+        {"cliente": "Luis", "total": 13.00, "fecha": "2025-05-24"},
 
-        {"cliente": "Carmen", "total":7, "fecha":"2025-05-21"},
-        {"cliente": "Carmen", "total": 9, "fecha": "2025-05-14"},
-        {"cliente": "Carmen", "total": 1, "fecha": "2025-06-11"}
+        {"cliente": "Carmen", "total":7.00, "fecha":"2025-05-21"},
+        {"cliente": "Carmen", "total": 9.00, "fecha": "2025-05-14"},
+        {"cliente": "Carmen", "total": 1.00, "fecha": "2025-06-11"},
     ]
+    suma_total = 0.0
 
+    suma_total = sum(pedido["total"] for pedido in pedidos_recientes[:-1])
 
-    return render_template("dashboard.html", productos=productos, usuarios=usuarios, pedidos=pedidos_recientes, **administrador)
+    return render_template("dashboard.html", productos=productos, usuarios=usuarios, pedidos=pedidos_recientes,total=suma_total , **administrador)
+
 if __name__ == '__main__':
     app.run()
