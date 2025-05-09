@@ -24,18 +24,18 @@ def registro():
     ]
 
     pedidos_recientes = [
-        {"cliente": "Ana", "total":3.00, "fecha":"2025-05-14"},
-        {"cliente": "Ana", "total": 15.00, "fecha": "2025-05-24"},
-        {"cliente": "Ana", "total": 8.00, "fecha": "2025-04-13"},
+        {"cliente": "Ana", "total":299.00, "fecha":"2025-05-14"},
+        {"cliente": "Ana", "total": 35.00, "fecha": "2025-05-24"},
+        {"cliente": "Ana", "total": 80.00, "fecha": "2025-04-13"},
 
 
-        {"cliente": "Luis", "total":1.00, "fecha":"2025-04-13"},
+        {"cliente": "Luis", "total":15.00, "fecha":"2025-04-13"},
         {"cliente": "Luis", "total": 5.00, "fecha": "2025-04-14"},
-        {"cliente": "Luis", "total": 13.00, "fecha": "2025-05-24"},
+        {"cliente": "Luis", "total": 10.00, "fecha": "2025-05-24"},
 
-        {"cliente": "Carmen", "total":7.00, "fecha":"2025-05-21"},
-        {"cliente": "Carmen", "total": 9.00, "fecha": "2025-05-14"},
-        {"cliente": "Carmen", "total": 1.00, "fecha": "2025-06-11"},
+        {"cliente": "Carmen", "total":50.00, "fecha":"2025-05-21"},
+        {"cliente": "Carmen", "total": 80.00, "fecha": "2025-05-14"},
+        {"cliente": "Carmen", "total": 10.00, "fecha": "2025-06-11"},
     ]
     suma_total = 0.0
 
