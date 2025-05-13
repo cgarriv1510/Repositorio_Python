@@ -15,7 +15,7 @@
         Tienda: {{ tienda }}<br>
         Fecha: {{ fecha }}<br>
     </p>
-    <table border="1">
+    <table style="border: 2px solid black">
             <tr>
                 <th>Nombre</th>
                 <th>Precio (€)</th>
@@ -40,7 +40,7 @@
 
     <br>
 
-    <table border="1">
+    <table style="border: 2px solid black">
             <tr>
                 <th>Nombre</th>
                 <th>Email</th>
@@ -65,7 +65,7 @@
 
     <br>
 
-    <table border="1">
+    <table style="border: 2px solid black">
                 <tr>
                     <th>Clente</th>
                     <th>Total (€)</th>
@@ -82,8 +82,50 @@
                 <tr>
                     <td>Total ganado</td>
                     <td colspan="2">{{ total }}€</td>
-
                 </tr>
     </table>
+
+    <br>
+
+
+    <form method="post">
+        <table style="border: 2px solid black">
+            <tr>
+                <th>Nombre</th>
+                <th>Precio (€)</th>
+                <th>Categoria</th>
+                <th>Stock</th>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="nombre" class="form_label"></label>
+                    <input type="text" name="nombre" id="nombre">
+                </td>
+
+                <td>
+                    <label for="precio" class="form_label"></label>
+                    <input type="number" name="precio" id="precio" step="0.1" value="0">
+                </td>
+
+                <td>
+                    <label for="categoria" class="form_label"></label>
+                    <input type="text" name="categoria" id="categoria">
+                </td>
+
+                <td>
+                    <label for="stock" class="form_label"></label>
+                    <input type="number" name="stock" id="stock" value="0">
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="4">
+                    <button type="submit" class="enviar">Enviar</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+
 </body>
 </html>

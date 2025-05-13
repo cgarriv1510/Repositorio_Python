@@ -1,20 +1,17 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from pymongo import MongoClient
 from datetime import date
 app = Flask(__name__)
+client = MongoClient("mongodb+srv://cgarriv1510:ba8TsQCTKMIWhOk2@flaskmongodb.qcsfafi.mongodb.net/")
+app.db = client.Tienda_Gestion
 
+productos = [productos for productos in app.db.productos.find({})]
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['GET','POST'])
+
 def registro():
     administrador = {"nombre_admin" : "Francisco", "tienda" : "TecnoMarket", "fecha" : date.today()}
-    productos = [
-        {"nombre": "raton", "precio": 35.00, "stock": 50, "categoria": "Tecnologia"},
-        {"nombre": "teclado", "precio": 50.00, "stock": 120, "categoria": "Tecnologia"},
-        {"nombre": "monitor", "precio": 299.00, "stock": 0, "categoria": "Tecnologia"},
-        {"nombre": "pala", "precio": 10.00, "stock": 30, "categoria": "Jardineria"},
-        {"nombre": "mesita", "precio": 80.00, "stock": 15, "categoria": "Muebles"},
-        {"nombre": "maceta", "precio": 5.00, "stock": 40, "categoria": "Jardineria"},
-        {"nombre": "compost", "precio": 15.00, "stock": 10, "categoria": "Jardineria"}
-    ]
+
 
     usuarios = [
         {"nombre": "Ana", "email": "Ana@gmail.com", "activo":True, "pedidos": 3},
@@ -37,6 +34,17 @@ def registro():
         {"cliente": "Carmen", "total": 80.00, "fecha": "2025-05-14"},
         {"cliente": "Carmen", "total": 10.00, "fecha": "2025-06-11"},
     ]
+
+    if request.method == "POST":
+        p_nombre = request.form.get("nombre")
+        p_precio = request.form.get("precio")
+        p_stock = request.form.get("stock")
+        p_categoria = request.form.get("categoria")
+        producto_nuevo ={"nombre": p_nombre, "precio": p_precio, "stock": p_stock, "categoria": p_categoria}
+        productos.append(producto_nuevo)
+        app.db.productos.insert_one(producto_nuevo)
+
+
     suma_total = 0.0
 
     suma_total = sum(pedido["total"] for pedido in pedidos_recientes[:-1])
