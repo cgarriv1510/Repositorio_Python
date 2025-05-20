@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Tienda Online{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav>
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('añadir_producto') }}">Añadir Producto</a>
+      <a href="{{ url_for('ver_productos') }}">Lista de Productos</a>
+      <a href="{{ url_for('registro_usuario') }}">Registro de Usuario</a>
+      <a href="{{ url_for('lista_usuarios') }}">Lista de Usuarios</a>
+    </nav>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flash-messages">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© Cristian Garcia 2025</p>
+    </footer>
+</body>
+</html>

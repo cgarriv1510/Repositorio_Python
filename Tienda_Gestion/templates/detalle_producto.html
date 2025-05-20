@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Detalle Producto{% endblock %}
+
+{% block content %}
+<h1>Detalle Producto</h1>
+<ul>
+    <li><strong>Nombre:</strong> {{ producto.nombre }}</li>
+    <li><strong>Precio:</strong> {{ "%.2f"|format(producto.precio) }} €</li>
+    <li><strong>Stock:</strong> {{ producto.stock }}</li>
+    <li><strong>Categoría:</strong> {{ producto.categoria }}</li>
+</ul>
+<a href="{{ url_for('ver_productos') }}">Volver a lista</a>
+{% endblock %}

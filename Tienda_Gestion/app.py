@@ -1,55 +1,109 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, abort, flash
+from datetime import datetime
 from pymongo import MongoClient
-from datetime import date
+from bson.objectid import ObjectId
+
 app = Flask(__name__)
+app.secret_key = "supersecretkey"  # necesario para mensajes flash
+
+# Conexión MongoDB
 client = MongoClient("mongodb+srv://cgarriv1510:ba8TsQCTKMIWhOk2@flaskmongodb.qcsfafi.mongodb.net/")
 app.db = client.Tienda_Gestion
 
-productos = [productos for productos in app.db.productos.find({})]
+# Clase Usuario
+class Usuario:
+    def __init__(self, nombre, email, contraseña):
+        self.nombre = nombre
+        self.email = email
+        self.contraseña = contraseña
+        self.fecha_registro = datetime.now()
 
-@app.route('/dashboard', methods=['GET','POST'])
+# --- RUTAS ---
+@app.route('/')
+@app.route('/dashboard')
+def dashboard():
+    productos = list(app.db.productos.find())
+    usuarios = list(app.db.usuarios.find())
+    pedidos = list(app.db.pedidos.find())
 
-def registro():
-    administrador = {"nombre_admin" : "Francisco", "tienda" : "TecnoMarket", "fecha" : date.today()}
+    # Calcular totales y datos importantes:
+    total_stock = sum(p['stock'] for p in productos)
+    clientes_activos = sum(1 for u in usuarios if u.get('activo', True))
+    cliente_mas_pedidos = None
+    max_pedidos = 0
+    for u in usuarios:
+        pedidos_cliente = app.db.pedidos.count_documents({"cliente_email": u['email']})
+        if pedidos_cliente > max_pedidos:
+            max_pedidos = pedidos_cliente
+            cliente_mas_pedidos = u['nombre']
+    ingresos_totales = sum(p.get('total', 0) for p in pedidos)
 
+    return render_template('dashboard.html',
+                           productos=productos,
+                           usuarios=usuarios,
+                           pedidos=pedidos,
+                           total_stock=total_stock,
+                           clientes_activos=clientes_activos,
+                           cliente_mas_pedidos=cliente_mas_pedidos,
+                           ingresos_totales=ingresos_totales,
+                           fecha_actual=datetime.now().strftime("%d/%m/%Y"))
 
-    usuarios = [
-        {"nombre": "Ana", "email": "Ana@gmail.com", "activo":True, "pedidos": 3},
-        {"nombre": "Luis", "email": "Luis@gmail.com", "activo":False, "pedidos": 3},
-        {"nombre": "Carmen", "email": "Carmen@gmail.com", "activo":True, "pedidos": 3},
-        {"nombre": "Pedro", "email": "Pedro@gmail.com", "activo":True, "pedidos": 0}
-    ]
+@app.route('/añadir-producto', methods=['GET', 'POST'])
+def añadir_producto():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        precio = float(request.form['precio'])
+        stock = int(request.form['stock'])
+        categoria = request.form['categoria']
+        app.db.productos.insert_one({
+            'nombre': nombre,
+            'precio': precio,
+            'stock': stock,
+            'categoria': categoria
+        })
+        flash('Producto añadido con éxito!')
+        return redirect(url_for('añadir_producto'))
 
-    pedidos_recientes = [
-        {"cliente": "Ana", "total":299.00, "fecha":"2025-05-14"},
-        {"cliente": "Ana", "total": 35.00, "fecha": "2025-05-24"},
-        {"cliente": "Ana", "total": 80.00, "fecha": "2025-04-13"},
+    return render_template('añadir_producto.html')
 
+@app.route('/productos')
+def ver_productos():
+    productos = list(app.db.productos.find())
+    return render_template('lista_productos.html', productos=productos)
 
-        {"cliente": "Luis", "total":15.00, "fecha":"2025-04-13"},
-        {"cliente": "Luis", "total": 5.00, "fecha": "2025-04-14"},
-        {"cliente": "Luis", "total": 10.00, "fecha": "2025-05-24"},
+@app.route('/productos/<id_producto>')
+def detalle_producto(id_producto):
+    producto = app.db.productos.find_one({"_id": ObjectId(id_producto)})
+    if not producto:
+        return render_template('404.html'), 404
+    return render_template('detalle_producto.html', producto=producto)
 
-        {"cliente": "Carmen", "total":50.00, "fecha":"2025-05-21"},
-        {"cliente": "Carmen", "total": 80.00, "fecha": "2025-05-14"},
-        {"cliente": "Carmen", "total": 10.00, "fecha": "2025-06-11"},
-    ]
+@app.route('/registro-usuario', methods=['GET', 'POST'])
+def registro_usuario():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        email = request.form['email']
+        contraseña = request.form['contraseña']
+        usuario = Usuario(nombre, email, contraseña)
+        app.db.usuarios.insert_one({
+            'nombre': usuario.nombre,
+            'email': usuario.email,
+            'contraseña': usuario.contraseña,
+            'fecha_registro': usuario.fecha_registro
+        })
+        flash('Usuario registrado con éxito!')
+        return redirect(url_for('registro_usuario'))
+    return render_template('registro_usuario.html')
 
-    if request.method == "POST":
-        p_nombre = request.form.get("nombre")
-        p_precio = request.form.get("precio")
-        p_stock = request.form.get("stock")
-        p_categoria = request.form.get("categoria")
-        producto_nuevo ={"nombre": p_nombre, "precio": p_precio, "stock": p_stock, "categoria": p_categoria}
-        productos.append(producto_nuevo)
-        app.db.productos.insert_one(producto_nuevo)
+@app.route('/usuarios')
+def lista_usuarios():
+    usuarios = list(app.db.usuarios.find())
+    return render_template('lista_usuarios.html', usuarios=usuarios)
 
-
-    suma_total = 0.0
-
-    suma_total = sum(pedido["total"] for pedido in pedidos_recientes[:-1])
-
-    return render_template("dashboard.html", productos=productos, usuarios=usuarios, pedidos=pedidos_recientes,total=suma_total , **administrador)
+# Página 404 personalizada
+@app.errorhandler(404)
+def pagina_no_encontrada(e):
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run()
